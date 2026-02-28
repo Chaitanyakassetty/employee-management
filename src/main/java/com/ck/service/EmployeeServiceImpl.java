@@ -3,6 +3,11 @@ package com.ck.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import com.ck.dto.EmployeeRequest;
 import com.ck.dto.EmployeeResponse;
 import com.ck.entity.Employee;
@@ -44,14 +49,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
 	// GET ALL
-	@Override
-	public List<EmployeeResponse> getAllEmployees() {
-	     List<Employee> employees = employeeRepository.findAll();
+//	@Override
+//	public List<EmployeeResponse> getAllEmployees() {
+//	     List<Employee> employees = employeeRepository.findAll();
+//
+//	        return employees.stream()
+//	                .map(this::mapToResponse)
+//	                .collect(Collectors.toList());
+//	    }
 
-	        return employees.stream()
-	                .map(this::mapToResponse)
-	                .collect(Collectors.toList());
-	    }
+	@Override
+	public Page<EmployeeResponse> getAllEmployees(
+			int page, int size, String sortBy, String direction) {
+		
+		Sort sort = direction.equalsIgnoreCase("asc") ?
+				Sort.by(sortBy).ascending():
+				Sort.by(sortBy).descending();
+				
+		Pageable pageable = PageRequest.of(page, size, sort);
+		
+		Page<Employee> employeePage = employeeRepository.findAll(pageable);
+		
+		return employeePage.map(this::mapToResponse);
+	}
 
 	
 	// UPDATE

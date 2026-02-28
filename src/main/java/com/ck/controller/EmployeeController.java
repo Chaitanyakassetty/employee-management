@@ -1,5 +1,6 @@
 package com.ck.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ck.dto.EmployeeRequest;
@@ -37,6 +39,19 @@ public class EmployeeController{
 	public ResponseEntity<EmployeeResponse>  getEmployeeById(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest ) {
 		return ResponseEntity.ok(employeeService.getEmployeeById(id));
 	}
+	
+	@GetMapping
+	public ResponseEntity<Page<EmployeeResponse>> getAllEmployees(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "asc") String direction) {
+		
+		Page<EmployeeResponse> employees = employeeService.getAllEmployees(page, size, sortBy, direction);
+		
+		return ResponseEntity.ok(employees);
+				
+			}
 	
 	@PutMapping("{/Id}")
 	public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeRequest employeeRequest) {

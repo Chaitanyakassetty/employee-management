@@ -1,6 +1,8 @@
 package com.ck.service;
 
-import java.util.List;
+//import java.util.List;
+
+import org.springframework.data.domain.Page;
 
 import com.ck.dto.EmployeeRequest;
 import com.ck.dto.EmployeeResponse;
@@ -11,8 +13,11 @@ public interface EmployeeService {
 	
 	EmployeeResponse getEmployeeById(Long id);
 	
-	List<EmployeeResponse> getAllEmployees();
-
+//	List<EmployeeResponse> getAllEmployees();
+	
+//	Now return Page<> instead of List	
+	Page<EmployeeResponse> getAllEmployees(int page, int size, String sortBy, String direction );
+	
     EmployeeResponse updateEmployee(Long id, EmployeeRequest request);
 	
 	void deleteEmployee(Long id);
