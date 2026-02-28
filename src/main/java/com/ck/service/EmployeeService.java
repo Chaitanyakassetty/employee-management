@@ -2,17 +2,18 @@ package com.ck.service;
 
 import java.util.List;
 
-import com.ck.entity.Employee;
+import com.ck.dto.EmployeeRequest;
+import com.ck.dto.EmployeeResponse;
 
 public interface EmployeeService {
 	
-	Employee createEmployee (Employee employee);
+	EmployeeResponse createEmployee(EmployeeRequest request);
 	
-	Employee getEmployeeById(Long id);
+	EmployeeResponse getEmployeeById(Long id);
 	
-	List<Employee> getAllEmployees();
-	
-	Employee updateEmployee(Long Id, Employee employee);
+	List<EmployeeResponse> getAllEmployees();
+
+    EmployeeResponse updateEmployee(Long id, EmployeeRequest request);
 	
 	void deleteEmployee(Long id);
 	
