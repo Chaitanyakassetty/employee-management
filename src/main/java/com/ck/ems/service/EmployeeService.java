@@ -1,11 +1,11 @@
-package com.ck.service;
+package com.ck.ems.service;
 
 //import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import com.ck.dto.EmployeeRequest;
-import com.ck.dto.EmployeeResponse;
+import com.ck.ems.dto.EmployeeRequest;
+import com.ck.ems.dto.EmployeeResponse;
 
 public interface EmployeeService {
 	

@@ -1,5 +1,7 @@
-package com.ck.controller;
+package com.ck.ems.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ck.dto.EmployeeRequest;
-import com.ck.dto.EmployeeResponse;
-import com.ck.service.EmployeeService;
+import com.ck.ems.dto.ApiResponse;
+import com.ck.ems.dto.EmployeeRequest;
+import com.ck.ems.dto.EmployeeResponse;
+import com.ck.ems.service.EmployeeService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController{
+	
+	private static final Logger logger =
+	        LoggerFactory.getLogger(EmployeeController.class);
 	
 	private final EmployeeService employeeService;
 	
@@ -30,18 +36,34 @@ public class EmployeeController{
 	}
 	
 	@PostMapping
-	public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest){
+	public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest){
+		
+		logger.info("Received request to create employee ");
+		
 		EmployeeResponse response = employeeService.createEmployee(employeeRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).body(response) ;
+		
+		logger.info("Sending response for employee creation");
+
+		ApiResponse<EmployeeResponse> apiResponse = 
+				new ApiResponse<>(201, "Employee created successfully", response);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse) ;
 	}
 	
-	@GetMapping("/{Id}")
-	public ResponseEntity<EmployeeResponse>  getEmployeeById(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest ) {
-		return ResponseEntity.ok(employeeService.getEmployeeById(id));
+	@GetMapping("/{id}")
+	public ResponseEntity<ApiResponse<EmployeeResponse>>  getEmployeeById(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest ) {
+		
+		EmployeeResponse response = employeeService.getEmployeeById(id);
+
+		    ApiResponse<EmployeeResponse> apiResponse =
+		            new ApiResponse<>(200, "Employee fetched successfully", response);
+
+//		return ResponseEntity.ok(employeeService.getEmployeeById(id));
+		    return ResponseEntity.ok(apiResponse);
 	}
 	
 	@GetMapping
-	public ResponseEntity<Page<EmployeeResponse>> getAllEmployees(
+	public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getAllEmployees(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size,
 			@RequestParam(defaultValue = "id") String sortBy,
@@ -49,18 +71,27 @@ public class EmployeeController{
 		
 		Page<EmployeeResponse> employees = employeeService.getAllEmployees(page, size, sortBy, direction);
 		
-		return ResponseEntity.ok(employees);
+		 ApiResponse<Page<EmployeeResponse>> apiResponse =
+		            new ApiResponse<>(200, "Employees fetched successfully", employees);
+
+//			return ResponseEntity.ok(employees);
+		    return ResponseEntity.ok(apiResponse);
 				
 			}
 	
-	@PutMapping("{/Id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeRequest employeeRequest) {
 		return ResponseEntity.ok(employeeService.updateEmployee(id, employeeRequest));
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteEmployee(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest) {
+	public ResponseEntity<ApiResponse<String>> deleteEmployee(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest) {
 		 employeeService.deleteEmployee(id);
-		    return ResponseEntity.ok("Employee deleted successfully");
+		 
+		 ApiResponse<String> response =
+		            new ApiResponse<>(200, "Employee deleted successfully", null);
+		 
+		 //return ResponseEntity.ok("Employee deleted successfully");
+		 return ResponseEntity.ok(response);
 	}
 }

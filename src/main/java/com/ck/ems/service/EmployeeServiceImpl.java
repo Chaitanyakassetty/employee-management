@@ -1,21 +1,28 @@
-package com.ck.service;
+package com.ck.ems.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+//import java.util.List;
+//import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
-import com.ck.dto.EmployeeRequest;
-import com.ck.dto.EmployeeResponse;
-import com.ck.entity.Employee;
-import com.ck.exception.ResourceNotFoundException;
-import com.ck.repository.EmployeeRepository;
+import com.ck.ems.dto.EmployeeRequest;
+import com.ck.ems.dto.EmployeeResponse;
+import com.ck.ems.entity.Employee;
+import com.ck.ems.exception.ResourceNotFoundException;
+import com.ck.ems.repository.EmployeeRepository;
 
+@Service
 public class EmployeeServiceImpl implements EmployeeService {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+	
 	private final EmployeeRepository employeeRepository;
 	
 	public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
@@ -25,6 +32,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public EmployeeResponse createEmployee(EmployeeRequest employeeRequest) {
 	   
+		logger.info("Creating employee with email: {}", employeeRequest.getEmail());
+		
 		// Convert DTO → Entity
         Employee employee = new Employee();
         employee.setName(employeeRequest.getName());
@@ -34,6 +43,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee savedEmployee = employeeRepository.save(employee);
 
+        logger.info("Employee created successfully with ID: {}", savedEmployee.getId());
+        
         // Convert Entity → Response DTO
         return mapToResponse(savedEmployee);
     }
@@ -42,8 +53,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public EmployeeResponse  getEmployeeById(Long id) {
 		
+		logger.info("Fetching employee with ID: {}", id);
+		
 		Employee employee = employeeRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Employee not found" + id));
+				.orElseThrow(() -> { 
+					logger.error("Employee not found with ID: {}", id);
+					return new ResourceNotFoundException("Employee not found" + id);
+		});
+				
 		return mapToResponse(employee);
 	}
 
@@ -112,8 +129,4 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    
 	    return response;
 	}
-	
-
-
 }
-
