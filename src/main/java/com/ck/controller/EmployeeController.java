@@ -15,6 +15,8 @@ import com.ck.dto.EmployeeRequest;
 import com.ck.dto.EmployeeResponse;
 import com.ck.service.EmployeeService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController{
@@ -26,7 +28,7 @@ public class EmployeeController{
 	}
 	
 	@PostMapping
-	public ResponseEntity<EmployeeResponse> createEmployee(@RequestBody EmployeeRequest employeeRequest){
+	public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest){
 		EmployeeResponse response = employeeService.createEmployee(employeeRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response) ;
 	}
@@ -37,7 +39,7 @@ public class EmployeeController{
 	}
 	
 	@PutMapping("{/Id}")
-	public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest) {
+	public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeRequest employeeRequest) {
 		return ResponseEntity.ok(employeeService.updateEmployee(id, employeeRequest));
 	}
 	
