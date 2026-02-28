@@ -1,4 +1,4 @@
-package com.ck.dto;
+package com.ck.ems.dto;
 
 import lombok.Data;
 

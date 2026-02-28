@@ -1,4 +1,4 @@
-package com.ck.exception;
+package com.ck.ems.exception;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.ck.exception;
+package com.ck.ems.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 	
