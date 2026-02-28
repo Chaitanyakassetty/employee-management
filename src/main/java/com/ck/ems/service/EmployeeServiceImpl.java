@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ck.ems.dto.EmployeeRequest;
 import com.ck.ems.dto.EmployeeResponse;
 import com.ck.ems.entity.Employee;
+import com.ck.ems.exception.EmailAlreadyExistsException;
 import com.ck.ems.exception.ResourceNotFoundException;
 import com.ck.ems.repository.EmployeeRepository;
 
@@ -33,6 +34,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public EmployeeResponse createEmployee(EmployeeRequest employeeRequest) {
 	   
 		logger.info("Creating employee with email: {}", employeeRequest.getEmail());
+		
+		 //  Check before saving
+        if (employeeRepository.existsByEmail(employeeRequest.getEmail())) {
+            throw new EmailAlreadyExistsException(
+                    "Email already exists: " + employeeRequest.getEmail());
+        }
 		
 		// Convert DTO → Entity
         Employee employee = new Employee();
@@ -116,6 +123,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeRepository.delete(employee);
     }
+	
+	@Override
+	public Page<EmployeeResponse> getEmployeesByDepartment(
+	        String department, int page, int size) {
+
+	    Pageable pageable = PageRequest.of(page, size);
+
+	    Page<Employee> employeePage =
+	            employeeRepository.findByDepartment(department, pageable);
+
+	    return employeePage.map(this::mapToResponse);
+	}
 	
 	// Helper Method (Entity → DTO)
 	private EmployeeResponse mapToResponse(Employee employee) {

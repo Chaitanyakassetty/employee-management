@@ -21,6 +21,8 @@ public interface EmployeeService {
     EmployeeResponse updateEmployee(Long id, EmployeeRequest request);
 	
 	void deleteEmployee(Long id);
+
+	Page<EmployeeResponse> getEmployeesByDepartment(String department, int page, int size);
 	
 }
 

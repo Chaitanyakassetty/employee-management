@@ -94,4 +94,19 @@ public class EmployeeController{
 		 //return ResponseEntity.ok("Employee deleted successfully");
 		 return ResponseEntity.ok(response);
 	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> searchByDepartment(
+	        @RequestParam String department,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "5") int size) {
+
+	    Page<EmployeeResponse> result =
+	    		employeeService.getEmployeesByDepartment(department, page, size);
+
+	    ApiResponse<Page<EmployeeResponse>> response =
+	            new ApiResponse<>(200, "Employees filtered successfully", result);
+
+	    return ResponseEntity.ok(response);
+	}
 }
